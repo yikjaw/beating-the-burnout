@@ -1,0 +1,43 @@
+@import "tailwindcss";
+
+@theme {
+  --color-surface: #faf8f5;
+  --color-surface-raised: #ffffff;
+  --color-ink: #2c2a26;
+  --color-ink-soft: #6b6459;
+  --color-border: #e6e1d8;
+
+  --color-accent: #4f7c82;
+  --color-accent-soft: #dcebec;
+  --color-accent-strong: #375c61;
+
+  --color-flag: #b8823f;
+  --color-flag-soft: #f3e6d2;
+
+  --color-chart-load: #4f7c82;
+  --color-chart-stress: #7d6b9e;
+
+  --font-sans: 'Segoe UI', system-ui, -apple-system, sans-serif;
+}
+
+html {
+  color-scheme: light;
+}
+
+body {
+  background-color: var(--color-surface);
+  color: var(--color-ink);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Minimum comfortable tap target for all interactive controls. */
+button,
+a[role='button'],
+input[type='checkbox'],
+input[type='radio'] {
+  min-height: 44px;
+}
+
+input[type='range'] {
+  min-height: 44px;
+}
