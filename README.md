@@ -2,7 +2,7 @@
 
 **Team:** Chan Yik Jaw, Nicholas Chin Sheng Chong, Brian, Herman
 **Problem Statement:** Stress & Workload Manager
-**Video Presentation:** [Unlisted YouTube Link — TODO]
+**Video Presentation:** https://youtu.be/4yUzU5cBkcg
 **Live demo:** https://beating-the-burnout.ecommerce-app.workers.dev
 
 A stress and workload manager for university students. Every other app tells you "you're at 90% capacity." This one says "move these two things to next week" — and does it in one tap.
