@@ -90,15 +90,31 @@ The live link requires signing in (it's a real, working product, not a static mo
 - Sign up with any email — email verification is off for demo purposes — then set weekly capacity, or
 - **Demo account:** `[TODO — create a demo@... account and put its password here]`, then go to **Settings → Demo → Load demo data** for an instantly-populated, realistic overloaded week
 
-**Key screens:** *(TODO — embed 4–8 screenshots here, each with a one-line caption, once captured from a logged-in demo session)*
-1. Home — load percentage + five category rings + active suggestion card
-2. The Balancer — before/after percentage, accept/reject
-3. Schedule — month calendar + day timetable
-4. Recovery nudge card in context on Home
-5. Import Schedule — AI-detected classes under review
-6. Settings — capacity sliders / Google account connection
-7. Edit Commitment — full CRUD in one screen
-8. Trends — stress vs. load chart
+**Key screens:**
+
+![Home](docs/screenshots/01-home.jpg)
+*Home — load percentage, five category rings, and a free-time suggestion card, all driven by real demo data.*
+
+![The Balancer](docs/screenshots/02-balancer.jpg)
+*The Balancer — the exact before/after moment: which commitments to defer and what it does to the percentage.*
+
+![Schedule](docs/screenshots/03-schedule.jpg)
+*Schedule — month calendar plus a real hour-by-hour day timetable.*
+
+![Recovery nudge](docs/screenshots/04-recovery-nudge.jpg)
+*A recovery nudge on Home, triggered by a simulated poor-sleep reading — accepting it books a real protected block.*
+
+![Settings](docs/screenshots/05-settings.jpg)
+*Settings — Google account connection (wearable sync + calendar export) and the demo-data tools.*
+
+![Edit commitment](docs/screenshots/06-edit-commitment.jpg)
+*Full CRUD in one screen — edit, mark done/reopen, or delete.*
+
+![Trends](docs/screenshots/07-trends.jpg)
+*Trends — real historical stress and load plotted together.*
+
+![Import schedule](docs/screenshots/08-import-schedule.jpg)
+*AI timetable import — photograph a class schedule and Gemini extracts it (review step shown after a photo is uploaded).*
 
 ### Design principles
 
