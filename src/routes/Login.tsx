@@ -83,12 +83,17 @@ export function Login() {
 
   return (
     <div className="mx-auto flex min-h-screen max-w-md flex-col justify-center gap-8 px-6">
-      <div className="text-center">
-        <h1 className="text-2xl font-semibold">Beating the Burnout</h1>
-        <p className="mt-1 text-sm text-[var(--color-ink-soft)]">Workload and energy, tracked honestly.</p>
+      <div className="flex flex-col items-center gap-3 text-center">
+        <span className="flex h-14 w-14 items-center justify-center rounded-2xl bg-[var(--color-accent)] text-2xl font-extrabold text-white shadow-[var(--shadow-accent)]">
+          B
+        </span>
+        <div>
+          <h1 className="text-2xl font-bold tracking-tight">Beating the Burnout</h1>
+          <p className="mt-1 text-sm text-[var(--color-ink-soft)]">Workload and energy, tracked honestly.</p>
+        </div>
       </div>
 
-      <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+      <form onSubmit={handleSubmit} className="card flex flex-col gap-4 p-5">
         <div className="flex flex-col gap-2">
           <label htmlFor="email" className="font-medium">
             Email
@@ -100,7 +105,7 @@ export function Login() {
             autoComplete="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            className="rounded-lg border border-[var(--color-border)] bg-[var(--color-surface-raised)] px-3 py-3 text-base"
+            className="field-input"
           />
         </div>
 
@@ -144,17 +149,13 @@ export function Login() {
         )}
 
         {error && (
-          <p role="alert" className="text-sm text-[var(--color-flag)]">
+          <p role="alert" className="text-sm text-[var(--color-flag-text)]">
             {error}
           </p>
         )}
         {info && <p className="text-sm text-[var(--color-accent-strong)]">{info}</p>}
 
-        <button
-          type="submit"
-          disabled={submitting || !canSubmit}
-          className="rounded-xl bg-[var(--color-accent)] px-6 py-3 text-base font-semibold text-white disabled:opacity-40"
-        >
+        <button type="submit" disabled={submitting || !canSubmit} className="btn-primary">
           {mode === 'signIn' ? 'Sign in' : 'Create account'}
         </button>
       </form>
@@ -162,7 +163,7 @@ export function Login() {
       <button
         type="button"
         onClick={() => switchMode(mode === 'signIn' ? 'signUp' : 'signIn')}
-        className="text-sm text-[var(--color-ink-soft)] underline underline-offset-2"
+        className="text-center text-sm text-[var(--color-ink-soft)] underline underline-offset-2"
       >
         {mode === 'signIn' ? 'New here? Create an account' : 'Already have an account? Sign in'}
       </button>

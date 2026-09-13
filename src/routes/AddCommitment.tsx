@@ -52,7 +52,7 @@ export function AddCommitment() {
           value={title}
           onChange={(e) => setTitle(e.target.value)}
           placeholder="e.g. Read chapter 6"
-          className="rounded-lg border border-[var(--color-border)] bg-[var(--color-surface-raised)] px-3 py-3 text-base"
+          className="field-input"
         />
       </div>
 
@@ -64,7 +64,7 @@ export function AddCommitment() {
           id="category"
           value={category}
           onChange={(e) => setCategory(e.target.value as Category)}
-          className="rounded-lg border border-[var(--color-border)] bg-[var(--color-surface-raised)] px-3 py-3 text-base"
+          className="field-input"
         >
           {CATEGORIES.map((c) => (
             <option key={c} value={c}>
@@ -99,7 +99,7 @@ export function AddCommitment() {
           type="date"
           value={dueAt}
           onChange={(e) => setDueAt(e.target.value)}
-          className="rounded-lg border border-[var(--color-border)] bg-[var(--color-surface-raised)] px-3 py-3 text-base"
+          className="field-input"
         />
       </div>
 
@@ -107,14 +107,7 @@ export function AddCommitment() {
         <legend className="font-medium">Priority</legend>
         <div className="flex gap-2">
           {([1, 2, 3] as Priority[]).map((p) => (
-            <label
-              key={p}
-              className={`flex flex-1 min-h-11 cursor-pointer items-center justify-center rounded-lg border px-3 py-2.5 text-sm ${
-                priority === p
-                  ? 'border-[var(--color-accent)] bg-[var(--color-accent-soft)] font-semibold'
-                  : 'border-[var(--color-border)] bg-[var(--color-surface-raised)]'
-              }`}
-            >
+            <label key={p} className="chip" data-active={priority === p}>
               <input
                 type="radio"
                 name="priority"
@@ -129,21 +122,12 @@ export function AddCommitment() {
         </div>
       </fieldset>
 
-      <label className="flex min-h-11 items-center justify-between rounded-lg border border-[var(--color-border)] bg-[var(--color-surface-raised)] px-3 py-2.5">
+      <label className="card flex min-h-11 items-center justify-between px-4 py-3">
         <span className="font-medium">Flexible — okay to move if things get tight</span>
-        <input
-          type="checkbox"
-          checked={isFlexible}
-          onChange={(e) => setIsFlexible(e.target.checked)}
-          className="h-5 w-5 accent-[var(--color-accent)]"
-        />
+        <input type="checkbox" checked={isFlexible} onChange={(e) => setIsFlexible(e.target.checked)} />
       </label>
 
-      <button
-        type="submit"
-        disabled={!canSubmit}
-        className="rounded-xl bg-[var(--color-accent)] px-6 py-3 text-base font-semibold text-white disabled:opacity-40"
-      >
+      <button type="submit" disabled={!canSubmit} className="btn-primary">
         Add
       </button>
     </form>

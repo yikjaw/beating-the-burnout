@@ -102,7 +102,7 @@ export function ImportSchedule() {
 
         <label
           htmlFor="timetable-photo"
-          className="flex min-h-32 cursor-pointer flex-col items-center justify-center gap-2 rounded-xl border-2 border-dashed border-[var(--color-border)] bg-[var(--color-surface-raised)] px-4 py-8 text-center"
+          className="flex min-h-32 cursor-pointer flex-col items-center justify-center gap-2 rounded-2xl border-2 border-dashed border-[var(--color-border-strong)] bg-[var(--color-surface-raised)] px-4 py-8 text-center transition-colors hover:border-[var(--color-accent)] hover:bg-[var(--color-accent-wash)]"
         >
           <span className="text-sm font-medium text-[var(--color-accent-strong)]">
             {status === 'loading' ? 'Reading your timetable…' : 'Tap to choose a photo'}
@@ -119,7 +119,7 @@ export function ImportSchedule() {
         </label>
 
         {error && (
-          <p role="alert" className="text-sm text-[var(--color-flag)]">
+          <p role="alert" className="text-sm text-[var(--color-flag-text)]">
             {error}
           </p>
         )}
@@ -137,7 +137,7 @@ export function ImportSchedule() {
         </p>
       </div>
 
-      <div className="flex flex-col gap-3 rounded-xl border border-[var(--color-border)] bg-[var(--color-surface-raised)] p-3">
+      <div className="card flex flex-col gap-3 p-4">
         <div className="flex gap-3">
           <label className="flex flex-1 flex-col gap-1 text-sm text-[var(--color-ink-soft)]">
             From
@@ -146,7 +146,7 @@ export function ImportSchedule() {
               value={termStart}
               onChange={(e) => setTermStart(e.target.value)}
               aria-label="Term start date"
-              className="min-h-11 rounded-lg border border-[var(--color-border)] px-2 text-sm text-[var(--color-ink)]"
+              className="field-input min-h-11 px-2 text-sm text-[var(--color-ink)]"
             />
           </label>
           <label className="flex flex-1 flex-col gap-1 text-sm text-[var(--color-ink-soft)]">
@@ -156,12 +156,12 @@ export function ImportSchedule() {
               value={termEnd}
               onChange={(e) => setTermEnd(e.target.value)}
               aria-label="Term end date"
-              className="min-h-11 rounded-lg border border-[var(--color-border)] px-2 text-sm text-[var(--color-ink)]"
+              className="field-input min-h-11 px-2 text-sm text-[var(--color-ink)]"
             />
           </label>
         </div>
         {!termValid && (
-          <p role="alert" className="text-xs text-[var(--color-flag)]">
+          <p role="alert" className="text-xs text-[var(--color-flag-text)]">
             The end date needs to be after the start date.
           </p>
         )}
@@ -169,17 +169,14 @@ export function ImportSchedule() {
 
       <ul className="flex flex-col gap-4">
         {rows.map((row) => (
-          <li
-            key={row.id}
-            className="flex flex-col gap-3 rounded-xl border border-[var(--color-border)] bg-[var(--color-surface-raised)] p-3"
-          >
+          <li key={row.id} className="card flex flex-col gap-3 p-3">
             <div className="flex items-start justify-between gap-2">
               <input
                 type="text"
                 value={row.title}
                 onChange={(e) => updateRow(row.id, { title: e.target.value })}
                 aria-label="Class title"
-                className="min-w-0 flex-1 rounded-lg border border-[var(--color-border)] px-2 py-2 text-sm font-medium"
+                className="field-input min-h-0 min-w-0 flex-1 py-2 text-sm font-medium"
               />
               <button
                 type="button"
@@ -196,7 +193,7 @@ export function ImportSchedule() {
                 value={row.day_of_week}
                 onChange={(e) => updateRow(row.id, { day_of_week: e.target.value as DayOfWeek })}
                 aria-label="Day of week"
-                className="min-h-11 flex-1 rounded-lg border border-[var(--color-border)] px-2 text-sm"
+                className="field-input min-h-11 flex-1 px-2 text-sm"
               >
                 {DAYS_OF_WEEK.map((d) => (
                   <option key={d} value={d}>
@@ -209,14 +206,14 @@ export function ImportSchedule() {
                 value={row.start_time}
                 onChange={(e) => updateRow(row.id, { start_time: e.target.value })}
                 aria-label="Start time"
-                className="min-h-11 rounded-lg border border-[var(--color-border)] px-2 text-sm"
+                className="field-input min-h-11 px-2 text-sm"
               />
               <input
                 type="time"
                 value={row.end_time}
                 onChange={(e) => updateRow(row.id, { end_time: e.target.value })}
                 aria-label="End time"
-                className="min-h-11 rounded-lg border border-[var(--color-border)] px-2 text-sm"
+                className="field-input min-h-11 px-2 text-sm"
               />
             </div>
 
@@ -226,11 +223,8 @@ export function ImportSchedule() {
                 role="radio"
                 aria-checked={row.recurs}
                 onClick={() => updateRow(row.id, { recurs: true })}
-                className={`min-h-11 flex-1 rounded-lg border px-2 text-sm font-medium ${
-                  row.recurs
-                    ? 'border-[var(--color-accent)] bg-[var(--color-accent-soft)] text-[var(--color-accent-strong)]'
-                    : 'border-[var(--color-border)] text-[var(--color-ink-soft)]'
-                }`}
+                className="chip"
+                data-active={row.recurs}
               >
                 Repeats weekly
               </button>
@@ -239,11 +233,8 @@ export function ImportSchedule() {
                 role="radio"
                 aria-checked={!row.recurs}
                 onClick={() => updateRow(row.id, { recurs: false })}
-                className={`min-h-11 flex-1 rounded-lg border px-2 text-sm font-medium ${
-                  !row.recurs
-                    ? 'border-[var(--color-accent)] bg-[var(--color-accent-soft)] text-[var(--color-accent-strong)]'
-                    : 'border-[var(--color-border)] text-[var(--color-ink-soft)]'
-                }`}
+                className="chip"
+                data-active={!row.recurs}
               >
                 Just this once
               </button>
@@ -254,12 +245,7 @@ export function ImportSchedule() {
 
       {rows.length === 0 && <p className="text-sm text-[var(--color-ink-soft)]">Nothing left to add.</p>}
 
-      <button
-        type="button"
-        onClick={handleConfirm}
-        disabled={saving || rows.length === 0 || !termValid}
-        className="rounded-xl bg-[var(--color-accent)] px-6 py-4 text-base font-semibold text-white disabled:opacity-40"
-      >
+      <button type="button" onClick={handleConfirm} disabled={saving || rows.length === 0 || !termValid} className="btn-primary py-4">
         {saving ? 'Adding…' : `Add ${rows.length} ${rows.length === 1 ? 'class' : 'classes'} to schedule`}
       </button>
     </div>

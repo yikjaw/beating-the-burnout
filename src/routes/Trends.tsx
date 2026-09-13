@@ -3,20 +3,26 @@ import { useAppData } from '../context/AppDataContext'
 import { categoryLoad, feltMultiplier, overallCapacity } from '../lib/scoring'
 
 export function Trends() {
-  const { capacities, commitments, checkins } = useAppData()
+  const { capacities, commitments, checkins, loadSnapshots } = useAppData()
 
   const loads = categoryLoad(commitments, capacities)
   const { percentage: currentLoad } = overallCapacity(loads, [])
 
-  // We only keep a rolling history of check-ins, not day-by-day snapshots
-  // of booked hours, so the load line is the current week's load scaled by
-  // each day's felt multiplier — an honest approximation that still shows
-  // whether stress and workload move together.
-  const data = checkins.map((c) => ({
-    date: c.logged_on.slice(5),
-    stress: c.stress,
-    load: Math.round(Math.min(1.5, currentLoad * feltMultiplier([c])) * 100),
-  }))
+  const snapshotByDate = new Map(loadSnapshots.map((s) => [s.logged_on, s.overall_percentage]))
+
+  // Real load percentage from a same-day snapshot (captured at check-in
+  // time) when we have one; older check-ins predate that feature, so they
+  // fall back to an approximation — today's load scaled by that day's felt
+  // multiplier — which is honest but not literal history.
+  const data = checkins.map((c) => {
+    const snapshot = snapshotByDate.get(c.logged_on)
+    const load = snapshot ?? Math.min(1.5, currentLoad * feltMultiplier([c]))
+    return {
+      date: c.logged_on.slice(5),
+      stress: c.stress,
+      load: Math.round(load * 100),
+    }
+  })
 
   return (
     <div className="flex flex-col gap-6">

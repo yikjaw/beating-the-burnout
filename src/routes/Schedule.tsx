@@ -43,12 +43,14 @@ export function Schedule() {
             Deadlines shown as time blocks — an estimate of when the work needs to happen, not a fixed appointment.
           </p>
         </div>
-        <Link
-          to="/import-schedule"
-          className="flex min-h-11 flex-shrink-0 items-center rounded-lg border border-[var(--color-border)] bg-[var(--color-surface-raised)] px-3 text-sm font-medium text-[var(--color-accent-strong)]"
-        >
-          Import
-        </Link>
+        <div className="flex flex-shrink-0 gap-2">
+          <Link to="/add-exam" className="btn-secondary px-3 text-sm text-[var(--color-accent-strong)]">
+            + Exam
+          </Link>
+          <Link to="/import-schedule" className="btn-secondary px-3 text-sm text-[var(--color-accent-strong)]">
+            Import
+          </Link>
+        </div>
       </div>
 
       <MonthCalendar

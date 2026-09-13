@@ -48,11 +48,7 @@ export function Onboarding() {
         ))}
       </div>
 
-      <button
-        type="button"
-        onClick={handleFinish}
-        className="mt-2 rounded-xl bg-[var(--color-accent)] px-6 py-3 text-base font-semibold text-white"
-      >
+      <button type="button" onClick={handleFinish} className="btn-primary mt-2">
         I'm done
       </button>
     </div>

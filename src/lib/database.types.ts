@@ -67,6 +67,7 @@ export type Database = {
           deferred_to: string | null
           due_at: string | null
           effort_hours: number
+          google_event_id: string | null
           id: string
           is_flexible: boolean
           priority: number
@@ -80,6 +81,7 @@ export type Database = {
           deferred_to?: string | null
           due_at?: string | null
           effort_hours: number
+          google_event_id?: string | null
           id?: string
           is_flexible?: boolean
           priority: number
@@ -93,10 +95,38 @@ export type Database = {
           deferred_to?: string | null
           due_at?: string | null
           effort_hours?: number
+          google_event_id?: string | null
           id?: string
           is_flexible?: boolean
           priority?: number
           status?: string
+          title?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      exams: {
+        Row: {
+          created_at: string
+          exam_at: string
+          id: string
+          revision_hours_per_week: number
+          title: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          exam_at: string
+          id?: string
+          revision_hours_per_week: number
+          title: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          exam_at?: string
+          id?: string
+          revision_hours_per_week?: number
           title?: string
           user_id?: string
         }
@@ -143,6 +173,30 @@ export type Database = {
         Update: {
           created_at?: string
           state?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      load_snapshots: {
+        Row: {
+          category_loads: Json
+          created_at: string
+          logged_on: string
+          overall_percentage: number
+          user_id: string
+        }
+        Insert: {
+          category_loads?: Json
+          created_at?: string
+          logged_on: string
+          overall_percentage: number
+          user_id: string
+        }
+        Update: {
+          category_loads?: Json
+          created_at?: string
+          logged_on?: string
+          overall_percentage?: number
           user_id?: string
         }
         Relationships: []

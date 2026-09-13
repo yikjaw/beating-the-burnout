@@ -27,21 +27,13 @@ export function RecoveryNudgeCard({ nudge }: { nudge: RecoveryNudge }) {
   }
 
   return (
-    <div className="flex flex-col gap-3 rounded-xl border border-[var(--color-accent-soft)] bg-[var(--color-accent-soft)] px-4 py-4">
+    <div className="card-tinted flex flex-col gap-3 px-4 py-4">
       <p className="text-sm text-[var(--color-ink)]">{nudge.message}</p>
       <div className="flex gap-3">
-        <button
-          type="button"
-          onClick={handleAccept}
-          className="min-h-11 flex-1 rounded-lg bg-[var(--color-accent)] px-4 text-sm font-semibold text-white"
-        >
+        <button type="button" onClick={handleAccept} className="btn-primary flex-1 text-sm">
           Add to schedule
         </button>
-        <button
-          type="button"
-          onClick={handleDismiss}
-          className="min-h-11 flex-1 rounded-lg border border-[var(--color-border)] bg-[var(--color-surface-raised)] px-4 text-sm font-medium text-[var(--color-ink)]"
-        >
+        <button type="button" onClick={handleDismiss} className="btn-secondary flex-1 text-sm">
           Not now
         </button>
       </div>

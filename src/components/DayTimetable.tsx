@@ -1,3 +1,4 @@
+import { Link } from 'react-router-dom'
 import { CATEGORY_LABEL } from '../lib/categoryMeta'
 import { DAY_WINDOW_END, DAY_WINDOW_START, formatHourLabel, timeBlockForCommitment } from '../lib/scheduleGrid'
 import type { Commitment } from '../lib/types'
@@ -52,16 +53,17 @@ export function DayTimetable({ commitments }: DayTimetableProps) {
           const height = Math.max(20, (endHour - startHour) * HOUR_HEIGHT_PX - 2)
 
           return (
-            <div
+            <Link
               key={commitment.id}
-              className="absolute left-1 right-1 overflow-hidden rounded-md border-l-4 border-[var(--color-accent)] bg-[var(--color-accent-soft)] px-2 py-1 text-xs"
+              to={`/edit/${commitment.id}`}
+              className="absolute left-1 right-1 overflow-hidden rounded-lg border-l-4 border-[var(--color-accent)] bg-[var(--color-accent-soft)] px-2 py-1 text-xs shadow-[var(--shadow-xs)] transition-shadow hover:shadow-[var(--shadow-sm)]"
               style={{ top, height }}
             >
               <p className="truncate font-medium text-[var(--color-ink)]">{commitment.title}</p>
               <p className="truncate text-[var(--color-ink-soft)]">
                 {CATEGORY_LABEL[commitment.category]} · {formatHourLabel(startHour)}–{formatHourLabel(endHour)}
               </p>
-            </div>
+            </Link>
           )
         })}
       </div>

@@ -1,3 +1,5 @@
+import { ChevronLeftIcon, ChevronRightIcon } from './icons'
+
 const WEEKDAY_LABELS = ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa']
 
 interface MonthCalendarProps {
@@ -26,26 +28,26 @@ export function MonthCalendar({ viewMonth, selectedDate, markedDates, onSelectDa
   ]
 
   return (
-    <div className="rounded-xl border border-[var(--color-border)] bg-[var(--color-surface-raised)] p-3">
+    <div className="card p-4">
       <div className="mb-2 flex items-center justify-between">
         <button
           type="button"
           onClick={() => onChangeMonth(-1)}
           aria-label="Previous month"
-          className="flex h-11 w-11 items-center justify-center text-lg text-[var(--color-ink-soft)]"
+          className="flex h-11 w-11 items-center justify-center rounded-full text-[var(--color-ink-soft)] transition-colors hover:bg-[var(--color-surface-sunken)]"
         >
-          ‹
+          <ChevronLeftIcon className="h-5 w-5" />
         </button>
-        <span className="font-medium">
+        <span className="font-semibold">
           {viewMonth.toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}
         </span>
         <button
           type="button"
           onClick={() => onChangeMonth(1)}
           aria-label="Next month"
-          className="flex h-11 w-11 items-center justify-center text-lg text-[var(--color-ink-soft)]"
+          className="flex h-11 w-11 items-center justify-center rounded-full text-[var(--color-ink-soft)] transition-colors hover:bg-[var(--color-surface-sunken)]"
         >
-          ›
+          <ChevronRightIcon className="h-5 w-5" />
         </button>
       </div>
 
@@ -72,12 +74,12 @@ export function MonthCalendar({ viewMonth, selectedDate, markedDates, onSelectDa
               onClick={() => onSelectDate(date)}
               aria-label={date.toDateString() + (isMarked ? ', has items due' : '')}
               aria-current={isToday ? 'date' : undefined}
-              className={`relative flex h-11 flex-col items-center justify-center text-sm ${
+              className={`relative flex h-11 flex-col items-center justify-center text-sm transition-colors ${
                 isSelected
-                  ? 'rounded-lg bg-[var(--color-accent)] font-semibold text-white'
+                  ? 'rounded-full bg-[var(--color-accent)] font-semibold text-white shadow-[var(--shadow-sm)]'
                   : isToday
-                    ? 'rounded-lg font-semibold text-[var(--color-accent-strong)]'
-                    : 'text-[var(--color-ink)]'
+                    ? 'rounded-full font-semibold text-[var(--color-accent-strong)] ring-1 ring-inset ring-[var(--color-accent-soft)]'
+                    : 'rounded-full text-[var(--color-ink)] hover:bg-[var(--color-surface-sunken)]'
               }`}
             >
               {date.getDate()}

@@ -3,9 +3,11 @@ import { supabase } from './supabaseClient'
 const GOOGLE_AUTHORIZE_URL = 'https://accounts.google.com/o/oauth2/v2/auth'
 // activity_and_fitness.readonly (for step count) turned out not to be a
 // real scope — dropped rather than guess again. Steps stay unavailable.
-const GOOGLE_HEALTH_SCOPES = [
+// One shared Google connection covers both Health data and Calendar export.
+const GOOGLE_SCOPES = [
   'https://www.googleapis.com/auth/googlehealth.sleep.readonly',
   'https://www.googleapis.com/auth/googlehealth.health_metrics_and_measurements.readonly',
+  'https://www.googleapis.com/auth/calendar.events',
 ].join(' ')
 
 export interface WearableMetric {
@@ -17,11 +19,12 @@ export interface WearableMetric {
 }
 
 /**
- * Starts the Google Health OAuth flow (the successor to the now-deprecated
- * Fitbit Web API, covering Fitbit and other connected devices). A one-time
- * state token is minted server-side (via an RLS-permitted insert) rather
- * than passing the user's own Supabase session token through Google's
- * authorize URL, which would leak into browser history and server logs.
+ * Starts the Google OAuth flow, requesting both Health data access (sleep,
+ * heart rate — the successor to the now-deprecated Fitbit Web API) and
+ * Calendar event access in one consent screen. A one-time state token is
+ * minted server-side (via an RLS-permitted insert) rather than passing the
+ * user's own Supabase session token through Google's authorize URL, which
+ * would leak into browser history and server logs.
  */
 export async function startFitbitConnect(): Promise<void> {
   const {
@@ -42,7 +45,7 @@ export async function startFitbitConnect(): Promise<void> {
     response_type: 'code',
     client_id: import.meta.env.VITE_GOOGLE_HEALTH_CLIENT_ID,
     redirect_uri: redirectUri,
-    scope: GOOGLE_HEALTH_SCOPES,
+    scope: GOOGLE_SCOPES,
     state: stateRow.state,
     access_type: 'offline',
     prompt: 'consent',

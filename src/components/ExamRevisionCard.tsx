@@ -1,30 +1,26 @@
 import { useState } from 'react'
 import { useAppData } from '../context/AppDataContext'
-import type { ActivitySuggestion } from '../lib/freeTime'
+import { revisionTitle } from '../lib/examRevision'
+import type { RevisionSuggestion } from '../lib/examRevision'
 import { formatHourLabel } from '../lib/scheduleGrid'
 
-const MAX_EFFORT_HOURS = 2
-
-export function FreeTimeCard({ suggestion }: { suggestion: ActivitySuggestion }) {
+export function ExamRevisionCard({ suggestion }: { suggestion: RevisionSuggestion }) {
   const { addCommitment } = useAppData()
   const [dismissed, setDismissed] = useState(false)
 
   if (dismissed) return null
 
   async function handleAccept() {
-    const slotDuration = suggestion.slot.endHour - suggestion.slot.startHour
-    const effortHours = Math.round(Math.min(MAX_EFFORT_HOURS, slotDuration) * 4) / 4
-    const dueHour = suggestion.slot.startHour + effortHours
-
+    const dueHour = suggestion.slot.startHour + suggestion.hours
     const due = new Date()
     due.setHours(Math.floor(dueHour), Math.round((dueHour % 1) * 60), 0, 0)
 
     await addCommitment({
-      title: suggestion.activity,
-      category: suggestion.category,
-      effort_hours: effortHours,
+      title: revisionTitle(suggestion.exam.title),
+      category: 'mental',
+      effort_hours: suggestion.hours,
       due_at: due.toISOString(),
-      priority: 3,
+      priority: 2,
       is_flexible: true,
     })
     setDismissed(true)
@@ -33,9 +29,8 @@ export function FreeTimeCard({ suggestion }: { suggestion: ActivitySuggestion })
   return (
     <div className="card-tinted flex flex-col gap-3 px-4 py-4">
       <p className="text-sm text-[var(--color-ink)]">
-        {formatHourLabel(suggestion.slot.startHour)}–{formatHourLabel(suggestion.slot.endHour)} is free today.{' '}
-        {suggestion.isNovel && <span className="text-[var(--color-ink-soft)]">Something different — </span>}
-        <span className="font-medium">{suggestion.activity}</span>?
+        {formatHourLabel(suggestion.slot.startHour)}–{formatHourLabel(suggestion.slot.endHour)} is free today —{' '}
+        put in {suggestion.hours}h revising for <span className="font-medium">{suggestion.exam.title}</span>?
       </p>
       <div className="flex gap-3">
         <button type="button" onClick={handleAccept} className="btn-primary flex-1 text-sm">

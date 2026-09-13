@@ -43,7 +43,7 @@ export function ForgotPassword() {
           </Link>
         </div>
       ) : (
-        <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+        <form onSubmit={handleSubmit} className="card flex flex-col gap-4 p-5">
           <div className="flex flex-col gap-2">
             <label htmlFor="email" className="font-medium">
               Email
@@ -55,21 +55,17 @@ export function ForgotPassword() {
               autoComplete="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="rounded-lg border border-[var(--color-border)] bg-[var(--color-surface-raised)] px-3 py-3 text-base"
+              className="field-input"
             />
           </div>
 
           {error && (
-            <p role="alert" className="text-sm text-[var(--color-flag)]">
+            <p role="alert" className="text-sm text-[var(--color-flag-text)]">
               {error}
             </p>
           )}
 
-          <button
-            type="submit"
-            disabled={submitting || email.trim().length === 0}
-            className="rounded-xl bg-[var(--color-accent)] px-6 py-3 text-base font-semibold text-white disabled:opacity-40"
-          >
+          <button type="submit" disabled={submitting || email.trim().length === 0} className="btn-primary">
             Send reset link
           </button>
 

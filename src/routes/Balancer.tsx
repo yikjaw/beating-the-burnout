@@ -53,16 +53,13 @@ export function Balancer() {
 
       <p className="text-lg leading-relaxed">
         Move {moveSentence} to next week — that takes you from{' '}
-        <span className="font-semibold text-[var(--color-flag)]">{currentPct}%</span> to{' '}
+        <span className="font-semibold text-[var(--color-flag-text)]">{currentPct}%</span> to{' '}
         <span className="font-semibold text-[var(--color-accent-strong)]">{projectedPct}%</span>.
       </p>
 
       <ul className="flex flex-col gap-2">
         {result.moves.map((m) => (
-          <li
-            key={m.commitmentId}
-            className="rounded-lg border border-[var(--color-border)] bg-[var(--color-surface-raised)] px-3 py-2.5 text-sm"
-          >
+          <li key={m.commitmentId} className="card px-4 py-3 text-sm">
             <span className="font-medium">{m.title}</span>
             <span className="text-[var(--color-ink-soft)]"> → next week</span>
           </li>
@@ -70,18 +67,10 @@ export function Balancer() {
       </ul>
 
       <div className="flex flex-col gap-3">
-        <button
-          type="button"
-          onClick={handleAccept}
-          className="rounded-xl bg-[var(--color-accent)] px-6 py-4 text-base font-semibold text-white"
-        >
+        <button type="button" onClick={handleAccept} className="btn-primary py-4">
           Accept
         </button>
-        <button
-          type="button"
-          onClick={handleReject}
-          className="rounded-xl border border-[var(--color-border)] bg-[var(--color-surface-raised)] px-6 py-4 text-base font-medium text-[var(--color-ink)]"
-        >
+        <button type="button" onClick={handleReject} className="btn-secondary py-4">
           Not this one
         </button>
       </div>

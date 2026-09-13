@@ -45,7 +45,7 @@ export function ResetPassword() {
         </p>
       </div>
 
-      <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+      <form onSubmit={handleSubmit} className="card flex flex-col gap-4 p-5">
         <PasswordField
           id="newPassword"
           label="New password"
@@ -66,16 +66,12 @@ export function ResetPassword() {
         />
 
         {error && (
-          <p role="alert" className="text-sm text-[var(--color-flag)]">
+          <p role="alert" className="text-sm text-[var(--color-flag-text)]">
             {error}
           </p>
         )}
 
-        <button
-          type="submit"
-          disabled={submitting || !isValid}
-          className="rounded-xl bg-[var(--color-accent)] px-6 py-3 text-base font-semibold text-white disabled:opacity-40"
-        >
+        <button type="submit" disabled={submitting || !isValid} className="btn-primary">
           Update password
         </button>
       </form>

@@ -3,21 +3,40 @@
 @theme {
   --color-surface: #faf8f5;
   --color-surface-raised: #ffffff;
+  --color-surface-sunken: #f2ede4;
   --color-ink: #2c2a26;
   --color-ink-soft: #6b6459;
+  --color-ink-faint: #9c9488;
   --color-border: #e6e1d8;
+  --color-border-strong: #d8d1c3;
 
   --color-accent: #4f7c82;
   --color-accent-soft: #dcebec;
   --color-accent-strong: #375c61;
+  --color-accent-wash: #eef4f4;
 
   --color-flag: #b8823f;
   --color-flag-soft: #f3e6d2;
+  /* Darker than --color-flag specifically for text: the lighter tone only
+     reaches ~3.1:1 against the page background, which is fine for graphics
+     (rings, borders — WCAG's 3:1 non-text threshold) but fails the 4.5:1
+     AA requirement for normal-size text. This one is verified at ~5.2:1. */
+  --color-flag-text: #7d5220;
 
   --color-chart-load: #4f7c82;
   --color-chart-stress: #7d6b9e;
 
-  --font-sans: 'Segoe UI', system-ui, -apple-system, sans-serif;
+  --font-sans: 'Plus Jakarta Sans', 'Segoe UI', system-ui, -apple-system, sans-serif;
+
+  /* Warm-tinted shadows (a hint of the ink color, not neutral black) read
+     as considered rather than a generic box-shadow default. */
+  --shadow-xs: 0 1px 2px rgba(44, 42, 38, 0.05);
+  --shadow-sm: 0 1px 3px rgba(44, 42, 38, 0.06), 0 1px 2px rgba(44, 42, 38, 0.05);
+  --shadow-md: 0 4px 10px rgba(44, 42, 38, 0.07), 0 1px 3px rgba(44, 42, 38, 0.05);
+  --shadow-lg: 0 12px 24px rgba(44, 42, 38, 0.10), 0 2px 6px rgba(44, 42, 38, 0.05);
+  --shadow-accent: 0 8px 20px rgba(55, 92, 97, 0.20);
+
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 html {
@@ -27,7 +46,23 @@ html {
 body {
   background-color: var(--color-surface);
   color: var(--color-ink);
+  font-family: var(--font-sans);
   -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  -webkit-tap-highlight-color: transparent;
+}
+
+* {
+  border-color: var(--color-border);
+}
+
+/* Visible, deliberate focus styling everywhere — a real accessibility
+   requirement here, and a well-designed focus ring also just looks like a
+   more finished product than the browser default. */
+:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+  border-radius: 4px;
 }
 
 /* Minimum comfortable tap target for all interactive controls. */
@@ -38,6 +73,220 @@ input[type='radio'] {
   min-height: 44px;
 }
 
+button {
+  font-family: inherit;
+}
+
 input[type='range'] {
   min-height: 44px;
+}
+
+@layer components {
+  /* Buttons — .btn holds the shared shape/motion; each variant repeats it
+     rather than composing via @apply, since Tailwind v4 only lets @apply
+     reference real utilities, not other custom classes in this layer. */
+  .btn,
+  .btn-primary,
+  .btn-secondary,
+  .btn-quiet,
+  .btn-danger-quiet {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    min-height: 48px;
+    border-radius: 0.9rem;
+    padding-inline: 1.5rem;
+    font-size: 0.95rem;
+    font-weight: 600;
+    transition: transform 120ms var(--ease-out), box-shadow 150ms var(--ease-out), background-color 150ms var(--ease-out), opacity 150ms;
+  }
+  .btn:active:not(:disabled),
+  .btn-primary:active:not(:disabled),
+  .btn-secondary:active:not(:disabled),
+  .btn-quiet:active:not(:disabled),
+  .btn-danger-quiet:active:not(:disabled) {
+    transform: scale(0.97);
+  }
+  .btn:disabled,
+  .btn-primary:disabled,
+  .btn-secondary:disabled,
+  .btn-quiet:disabled,
+  .btn-danger-quiet:disabled {
+    opacity: 0.4;
+  }
+
+  .btn-primary {
+    background-color: var(--color-accent);
+    color: white;
+    box-shadow: var(--shadow-accent);
+  }
+  .btn-primary:hover:not(:disabled) {
+    background-color: var(--color-accent-strong);
+  }
+
+  .btn-secondary {
+    background-color: var(--color-surface-raised);
+    border: 1px solid var(--color-border);
+    color: var(--color-ink);
+    box-shadow: var(--shadow-xs);
+  }
+  .btn-secondary:hover:not(:disabled) {
+    background-color: var(--color-surface-sunken);
+  }
+
+  .btn-quiet {
+    background-color: transparent;
+    color: var(--color-ink-soft);
+    padding-inline: 1rem;
+  }
+  .btn-quiet:hover:not(:disabled) {
+    background-color: var(--color-surface-sunken);
+  }
+
+  .btn-danger-quiet {
+    background-color: var(--color-surface-raised);
+    border: 1px solid var(--color-border);
+    box-shadow: var(--shadow-xs);
+    color: var(--color-flag-text);
+  }
+  .btn-danger-quiet:hover:not(:disabled) {
+    background-color: var(--color-surface-sunken);
+  }
+
+  /* Surfaces */
+  .card {
+    background-color: var(--color-surface-raised);
+    border: 1px solid var(--color-border);
+    border-radius: 1.1rem;
+    box-shadow: var(--shadow-sm);
+  }
+
+  .card-tinted {
+    background-color: var(--color-accent-wash);
+    border: 1px solid var(--color-accent-soft);
+    border-radius: 1.1rem;
+  }
+
+  /* Form controls */
+  .field-input {
+    width: 100%;
+    min-height: 48px;
+    border-radius: 0.85rem;
+    border: 1px solid var(--color-border);
+    background-color: var(--color-surface-raised);
+    padding-inline: 0.9rem;
+    font-size: 1rem;
+    color: var(--color-ink);
+    transition: border-color 150ms, box-shadow 150ms;
+  }
+  .field-input:focus {
+    outline: none;
+    border-color: var(--color-accent);
+    box-shadow: 0 0 0 3px var(--color-accent-soft);
+  }
+
+  .chip {
+    display: flex;
+    min-height: 44px;
+    flex: 1 1 0%;
+    cursor: pointer;
+    align-items: center;
+    justify-content: center;
+    border-radius: 0.85rem;
+    border: 1px solid var(--color-border);
+    background-color: var(--color-surface-raised);
+    padding-inline: 0.75rem;
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: var(--color-ink);
+    transition: border-color 150ms, background-color 150ms, color 150ms;
+  }
+  .chip[data-active='true'] {
+    border-color: var(--color-accent);
+    background-color: var(--color-accent-soft);
+    color: var(--color-accent-strong);
+    font-weight: 600;
+  }
+}
+
+/* Custom range slider — the native control reads as an unstyled browser
+   default everywhere it appears (onboarding, add/edit forms, settings), so
+   it's one of the highest-visibility places a generic look shows through. */
+input[type='range'] {
+  -webkit-appearance: none;
+  appearance: none;
+  background: transparent;
+  cursor: pointer;
+}
+input[type='range']::-webkit-slider-runnable-track {
+  height: 6px;
+  border-radius: 999px;
+  background: var(--color-border);
+}
+input[type='range']::-moz-range-track {
+  height: 6px;
+  border-radius: 999px;
+  background: var(--color-border);
+}
+input[type='range']::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  margin-top: -9px;
+  height: 24px;
+  width: 24px;
+  border-radius: 50%;
+  background: var(--color-accent);
+  border: 3px solid var(--color-surface-raised);
+  box-shadow: var(--shadow-md);
+  transition: transform 120ms var(--ease-out);
+}
+input[type='range']::-moz-range-thumb {
+  height: 24px;
+  width: 24px;
+  border: 3px solid var(--color-surface-raised);
+  border-radius: 50%;
+  background: var(--color-accent);
+  box-shadow: var(--shadow-md);
+}
+input[type='range']:active::-webkit-slider-thumb {
+  transform: scale(1.1);
+}
+
+/* Custom checkbox — same reasoning as the range input above. */
+input[type='checkbox'] {
+  -webkit-appearance: none;
+  appearance: none;
+  height: 24px;
+  width: 24px;
+  min-height: 24px;
+  flex-shrink: 0;
+  border-radius: 7px;
+  border: 1.5px solid var(--color-border-strong);
+  background-color: var(--color-surface-raised);
+  cursor: pointer;
+  display: inline-grid;
+  place-content: center;
+  transition: background-color 150ms, border-color 150ms;
+}
+input[type='checkbox']:checked {
+  background-color: var(--color-accent);
+  border-color: var(--color-accent);
+}
+input[type='checkbox']:checked::after {
+  content: '';
+  width: 6px;
+  height: 10px;
+  border: solid white;
+  border-width: 0 2px 2px 0;
+  transform: rotate(45deg) translate(-1px, -1px);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+  }
 }

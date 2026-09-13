@@ -30,7 +30,7 @@ export function PasswordField({ id, label, value, onChange, autoComplete, minLen
           onChange={(e) => onChange(e.target.value)}
           aria-invalid={error ? true : undefined}
           aria-describedby={error ? errorId : undefined}
-          className="w-full rounded-lg border border-[var(--color-border)] bg-[var(--color-surface-raised)] px-3 py-3 pr-14 text-base"
+          className="field-input pr-14"
         />
         <button
           type="button"
@@ -43,7 +43,7 @@ export function PasswordField({ id, label, value, onChange, autoComplete, minLen
         </button>
       </div>
       {error && (
-        <p id={errorId} role="alert" className="text-sm text-[var(--color-flag)]">
+        <p id={errorId} role="alert" className="text-sm text-[var(--color-flag-text)]">
           {error}
         </p>
       )}

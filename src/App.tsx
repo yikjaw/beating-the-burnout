@@ -5,8 +5,10 @@ import { RequireOnboarding } from './components/layout/RequireOnboarding'
 import { AppDataProvider } from './context/AppDataContext'
 import { AuthProvider } from './context/AuthContext'
 import { AddCommitment } from './routes/AddCommitment'
+import { AddExam } from './routes/AddExam'
 import { Balancer } from './routes/Balancer'
 import { CheckIn } from './routes/CheckIn'
+import { EditCommitment } from './routes/EditCommitment'
 import { ForgotPassword } from './routes/ForgotPassword'
 import { Home } from './routes/Home'
 import { ImportSchedule } from './routes/ImportSchedule'
@@ -33,6 +35,8 @@ export function App() {
                 <Route path="/schedule" element={<Schedule />} />
                 <Route path="/import-schedule" element={<ImportSchedule />} />
                 <Route path="/add" element={<AddCommitment />} />
+                <Route path="/edit/:id" element={<EditCommitment />} />
+                <Route path="/add-exam" element={<AddExam />} />
                 <Route path="/balancer" element={<Balancer />} />
                 <Route path="/checkin" element={<CheckIn />} />
                 <Route path="/trends" element={<Trends />} />

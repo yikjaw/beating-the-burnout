@@ -33,15 +33,21 @@ export function Settings() {
     syncingFitbit,
     syncFitbit,
     disconnectFitbit,
+    syncingCalendar,
+    syncGoogleCalendar,
     simulateWearableReading,
     preferences,
     setPreferences,
+    loadDemoData,
     refresh,
   } = useAppData()
   const [searchParams, setSearchParams] = useSearchParams()
   const [connectError, setConnectError] = useState<string | null>(null)
   const [syncMessage, setSyncMessage] = useState<string | null>(null)
+  const [calendarMessage, setCalendarMessage] = useState<string | null>(null)
   const [simulating, setSimulating] = useState(false)
+  const [loadingDemo, setLoadingDemo] = useState(false)
+  const [demoLoaded, setDemoLoaded] = useState(false)
   const [capacityDraft, setCapacityDraft] = useState<CapacityMap>(capacities)
   const [savingCapacity, setSavingCapacity] = useState(false)
   const [capacitySaved, setCapacitySaved] = useState(false)
@@ -64,7 +70,7 @@ export function Settings() {
   useEffect(() => {
     if (!fitbitParam) return
     if (fitbitParam === 'connected') refresh()
-    if (fitbitParam === 'error') setConnectError("Couldn't connect Fitbit. Please try again.")
+    if (fitbitParam === 'error') setConnectError("Couldn't connect your Google account. Please try again.")
     setSearchParams({}, { replace: true })
   }, [fitbitParam, refresh, setSearchParams])
 
@@ -75,7 +81,7 @@ export function Settings() {
     try {
       await startFitbitConnect()
     } catch (err) {
-      setConnectError(err instanceof Error ? err.message : 'Could not start Fitbit connection')
+      setConnectError(err instanceof Error ? err.message : 'Could not start the Google connection')
     }
   }
 
@@ -85,10 +91,27 @@ export function Settings() {
     setSyncMessage(result.error ?? 'Synced.')
   }
 
+  async function handleSyncCalendar() {
+    setCalendarMessage(null)
+    const result = await syncGoogleCalendar()
+    if (result.error) {
+      setCalendarMessage(result.error)
+    } else {
+      setCalendarMessage(`Synced ${result.synced} event${result.synced === 1 ? '' : 's'} to Google Calendar.`)
+    }
+  }
+
   async function handleSimulate(scenario: 'poor-sleep' | 'elevated-heart-rate') {
     setSimulating(true)
     await simulateWearableReading(scenario)
     setSimulating(false)
+  }
+
+  async function handleLoadDemoData() {
+    setLoadingDemo(true)
+    await loadDemoData()
+    setLoadingDemo(false)
+    setDemoLoaded(true)
   }
 
   async function handleSaveCapacity() {
@@ -131,9 +154,9 @@ export function Settings() {
         </p>
       )}
 
-      <section className="flex flex-col gap-4">
+      <section className="card flex flex-col gap-4 p-5">
         <h2 className="text-sm font-semibold text-[var(--color-ink-soft)]">Weekly capacity</h2>
-        <p className="text-xs text-[var(--color-ink-soft)]">
+        <p className="-mt-2 text-xs text-[var(--color-ink-soft)]">
           How many hours a week you realistically have for each area — this is what your load percentage is
           measured against. Change it any time; no need to redo onboarding.
         </p>
@@ -152,20 +175,15 @@ export function Settings() {
             }}
           />
         ))}
-        <button
-          type="button"
-          onClick={handleSaveCapacity}
-          disabled={savingCapacity}
-          className="rounded-xl bg-[var(--color-accent)] px-6 py-3 text-base font-semibold text-white disabled:opacity-40"
-        >
+        <button type="button" onClick={handleSaveCapacity} disabled={savingCapacity} className="btn-primary">
           {savingCapacity ? 'Saving…' : 'Save'}
         </button>
         {capacitySaved && <p className="text-xs text-[var(--color-accent-strong)]">Saved.</p>}
       </section>
 
-      <section className="flex flex-col gap-4">
+      <section className="card flex flex-col gap-4 p-5">
         <h2 className="text-sm font-semibold text-[var(--color-ink-soft)]">Sleep &amp; activities</h2>
-        <p className="text-xs text-[var(--color-ink-soft)]">
+        <p className="-mt-2 text-xs text-[var(--color-ink-soft)]">
           Optional — set this up and Home will suggest something to do with genuinely free time in your day,
           based on when you sleep and what you like doing.
         </p>
@@ -180,7 +198,7 @@ export function Settings() {
                 setPrefsDraft((prev) => ({ ...prev, wakeTime: e.target.value }))
                 setPrefsSaved(false)
               }}
-              className="min-h-11 rounded-lg border border-[var(--color-border)] px-2 text-sm text-[var(--color-ink)]"
+              className="field-input min-h-11 px-2 text-sm text-[var(--color-ink)]"
             />
           </label>
           <label className="flex flex-1 flex-col gap-1 text-sm text-[var(--color-ink-soft)]">
@@ -192,7 +210,7 @@ export function Settings() {
                 setPrefsDraft((prev) => ({ ...prev, bedtime: e.target.value }))
                 setPrefsSaved(false)
               }}
-              className="min-h-11 rounded-lg border border-[var(--color-border)] px-2 text-sm text-[var(--color-ink)]"
+              className="field-input min-h-11 px-2 text-sm text-[var(--color-ink)]"
             />
           </label>
         </div>
@@ -204,7 +222,7 @@ export function Settings() {
               {prefsDraft.activities.map((activity, i) => (
                 <li
                   key={`${activity.name}-${i}`}
-                  className="flex min-h-11 items-center gap-2 rounded-lg border border-[var(--color-border)] bg-[var(--color-surface-raised)] px-3 text-sm"
+                  className="flex min-h-11 items-center gap-2 rounded-full border border-[var(--color-border)] bg-[var(--color-surface-sunken)] px-3 text-sm"
                 >
                   {activity.name}
                   <span className="text-[var(--color-ink-soft)]">{CATEGORY_LABEL[activity.category]}</span>
@@ -228,13 +246,13 @@ export function Settings() {
               onChange={(e) => setNewActivityName(e.target.value)}
               placeholder="e.g. Basketball"
               aria-label="New activity name"
-              className="min-h-11 min-w-0 flex-1 rounded-lg border border-[var(--color-border)] px-2 text-sm"
+              className="field-input min-h-11 min-w-0 flex-1 px-2 text-sm"
             />
             <select
               value={newActivityCategory}
               onChange={(e) => setNewActivityCategory(e.target.value as Category)}
               aria-label="New activity category"
-              className="min-h-11 rounded-lg border border-[var(--color-border)] px-2 text-sm"
+              className="field-input min-h-11 px-2 text-sm"
             >
               {ACTIVITY_CATEGORIES.map((c) => (
                 <option key={c} value={c}>
@@ -242,78 +260,68 @@ export function Settings() {
                 </option>
               ))}
             </select>
-            <button
-              type="button"
-              onClick={handleAddActivity}
-              className="min-h-11 rounded-lg border border-[var(--color-border)] bg-[var(--color-surface-raised)] px-4 text-sm font-medium text-[var(--color-accent-strong)]"
-            >
+            <button type="button" onClick={handleAddActivity} className="btn-secondary px-4 text-sm text-[var(--color-accent-strong)]">
               Add
             </button>
           </div>
         </div>
 
-        <button
-          type="button"
-          onClick={handleSavePreferences}
-          disabled={savingPrefs}
-          className="rounded-xl bg-[var(--color-accent)] px-6 py-3 text-base font-semibold text-white disabled:opacity-40"
-        >
+        <button type="button" onClick={handleSavePreferences} disabled={savingPrefs} className="btn-primary">
           {savingPrefs ? 'Saving…' : 'Save'}
         </button>
         {prefsSaved && <p className="text-xs text-[var(--color-accent-strong)]">Saved.</p>}
       </section>
 
-      <section className="flex flex-col gap-3">
-        <h2 className="text-sm font-semibold text-[var(--color-ink-soft)]">Wearable</h2>
+      <section className="card flex flex-col gap-3 p-5">
+        <h2 className="text-sm font-semibold text-[var(--color-ink-soft)]">Google account</h2>
 
         {fitbitConnected ? (
-          <div className="flex flex-col gap-3 rounded-xl border border-[var(--color-border)] bg-[var(--color-surface-raised)] p-4">
-            <p className="text-sm font-medium text-[var(--color-accent-strong)]">Fitbit connected</p>
+          <div className="card-tinted flex flex-col gap-4 p-4">
+            <p className="text-sm font-medium text-[var(--color-accent-strong)]">Connected</p>
 
-            {latestMetric && (
-              <p className="text-sm text-[var(--color-ink-soft)]">
-                Last synced ({latestMetric.logged_on}): resting HR{' '}
-                {latestMetric.resting_heart_rate ?? '—'} bpm, slept {formatMinutes(latestMetric.sleep_minutes)}
-                {latestMetric.sleep_efficiency !== null ? ` (${latestMetric.sleep_efficiency}% efficiency)` : ''},{' '}
-                {latestMetric.steps?.toLocaleString() ?? '—'} steps
-              </p>
-            )}
-
-            <div className="flex gap-3">
-              <button
-                type="button"
-                onClick={handleSync}
-                disabled={syncingFitbit}
-                className="min-h-11 flex-1 rounded-lg bg-[var(--color-accent)] px-4 text-sm font-semibold text-white disabled:opacity-40"
-              >
-                {syncingFitbit ? 'Syncing…' : 'Sync now'}
+            <div className="flex flex-col gap-2">
+              <span className="text-sm font-medium text-[var(--color-ink)]">Wearable data</span>
+              {latestMetric && (
+                <p className="text-sm text-[var(--color-ink-soft)]">
+                  Last synced ({latestMetric.logged_on}): resting HR{' '}
+                  {latestMetric.resting_heart_rate ?? '—'} bpm, slept {formatMinutes(latestMetric.sleep_minutes)}
+                  {latestMetric.sleep_efficiency !== null ? ` (${latestMetric.sleep_efficiency}% efficiency)` : ''},{' '}
+                  {latestMetric.steps?.toLocaleString() ?? '—'} steps
+                </p>
+              )}
+              <button type="button" onClick={handleSync} disabled={syncingFitbit} className="btn-primary text-sm">
+                {syncingFitbit ? 'Syncing…' : 'Sync wearable data'}
               </button>
-              <button
-                type="button"
-                onClick={disconnectFitbit}
-                className="min-h-11 flex-1 rounded-lg border border-[var(--color-border)] px-4 text-sm font-medium text-[var(--color-ink)]"
-              >
-                Disconnect
-              </button>
+              {syncMessage && <p className="text-xs text-[var(--color-ink-soft)]">{syncMessage}</p>}
             </div>
 
-            {syncMessage && <p className="text-xs text-[var(--color-ink-soft)]">{syncMessage}</p>}
+            <div className="flex flex-col gap-2 border-t border-[var(--color-border)] pt-4">
+              <span className="text-sm font-medium text-[var(--color-ink)]">Calendar export</span>
+              <p className="text-xs text-[var(--color-ink-soft)]">
+                Push every open commitment onto your real Google Calendar. Safe to run again — it updates
+                existing events instead of duplicating them.
+              </p>
+              <button type="button" onClick={handleSyncCalendar} disabled={syncingCalendar} className="btn-primary text-sm">
+                {syncingCalendar ? 'Exporting…' : 'Export to Google Calendar'}
+              </button>
+              {calendarMessage && <p className="text-xs text-[var(--color-ink-soft)]">{calendarMessage}</p>}
+            </div>
+
+            <button type="button" onClick={disconnectFitbit} className="btn-secondary text-sm">
+              Disconnect
+            </button>
           </div>
         ) : (
           <div className="flex flex-col gap-2">
-            <button
-              type="button"
-              onClick={handleConnect}
-              className="rounded-xl border border-[var(--color-border)] bg-[var(--color-surface-raised)] px-6 py-3 text-base font-medium text-[var(--color-accent-strong)]"
-            >
-              Connect Fitbit
+            <button type="button" onClick={handleConnect} className="btn-secondary text-[var(--color-accent-strong)]">
+              Connect Google
             </button>
             <p className="text-xs text-[var(--color-ink-soft)]">
-              Lets us read your sleep, heart rate, and step count — nothing is shared anywhere else. When it
-              shows something's off, we'll suggest protecting real time on your schedule for it.
+              Lets us read your sleep, heart rate, and step count, and push your commitments onto your real
+              Google Calendar — nothing is shared anywhere else.
             </p>
             {connectError && (
-              <p role="alert" className="text-sm text-[var(--color-flag)]">
+              <p role="alert" className="text-sm text-[var(--color-flag-text)]">
                 {connectError}
               </p>
             )}
@@ -321,37 +329,37 @@ export function Settings() {
         )}
       </section>
 
-      <section className="flex flex-col gap-2">
-        <h2 className="text-sm font-semibold text-[var(--color-ink-soft)]">Demo: simulate a reading</h2>
+      <section className="card flex flex-col gap-2 p-5">
+        <h2 className="text-sm font-semibold text-[var(--color-ink-soft)]">Demo</h2>
         <p className="text-xs text-[var(--color-ink-soft)]">
+          Populate this account with a realistic overloaded week — commitments, capacities, and a rising-stress
+          check-in history — so the balancer and nudges have something to show. Adds to what's already here.
+        </p>
+        <button type="button" onClick={handleLoadDemoData} disabled={loadingDemo} className="btn-secondary text-sm text-[var(--color-accent-strong)]">
+          {loadingDemo ? 'Loading…' : 'Load demo data'}
+        </button>
+        {demoLoaded && <p className="text-xs text-[var(--color-accent-strong)]">Loaded — check Home and the Balancer.</p>}
+
+        <p className="mt-2 text-xs text-[var(--color-ink-soft)]">
           No wearable? Write a fake-but-clearly-fake data point so you can see the schedule respond, without
           needing a real device.
         </p>
         <div className="flex gap-3">
-          <button
-            type="button"
-            onClick={() => handleSimulate('poor-sleep')}
-            disabled={simulating}
-            className="min-h-11 flex-1 rounded-lg border border-[var(--color-border)] bg-[var(--color-surface-raised)] px-3 text-sm font-medium text-[var(--color-ink)] disabled:opacity-40"
-          >
+          <button type="button" onClick={() => handleSimulate('poor-sleep')} disabled={simulating} className="btn-secondary flex-1 text-sm">
             Simulate poor sleep
           </button>
           <button
             type="button"
             onClick={() => handleSimulate('elevated-heart-rate')}
             disabled={simulating}
-            className="min-h-11 flex-1 rounded-lg border border-[var(--color-border)] bg-[var(--color-surface-raised)] px-3 text-sm font-medium text-[var(--color-ink)] disabled:opacity-40"
+            className="btn-secondary flex-1 text-sm"
           >
             Simulate high heart rate
           </button>
         </div>
       </section>
 
-      <button
-        type="button"
-        onClick={signOut}
-        className="rounded-xl border border-[var(--color-border)] bg-[var(--color-surface-raised)] px-6 py-3 text-base font-medium text-[var(--color-ink)]"
-      >
+      <button type="button" onClick={signOut} className="btn-secondary">
         Sign out
       </button>
 
